@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from redis_cachetools.redis_cache import RedisCache
+from rediscache_cachetools.redis_cache import RedisCache
 
 
 @patch('redis.StrictRedis')

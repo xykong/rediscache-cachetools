@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from cachetools import LRUCache, LFUCache
 
-from redis_cachetools.chain_cache import ChainCache
+from rediscache_cachetools.chain_cache import ChainCache
 
 
 def test_cache_chain_init():

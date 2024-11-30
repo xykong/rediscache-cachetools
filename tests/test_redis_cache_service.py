@@ -2,7 +2,7 @@ import socket
 
 import pytest
 
-from redis_cachetools.redis_cache import RedisCache
+from rediscache_cachetools.redis_cache import RedisCache
 
 KEY, VAL = "hello-world!", "Hello World…"
 

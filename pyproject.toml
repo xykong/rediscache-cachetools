@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "redis-cachetools"
+name = "rediscache-cachetools"
 version = "0.1.0"
 description = "An extension of python cachetools for redis cache."
 authors = ["xy.kong <xy.kong@gmail.com>"]
@@ -7,10 +7,10 @@ readme = "README.md"
 
 
 [project.urls]
-repository = "https://github.com/xykong/redis-cachetools"
-documentation = "https://github.com/xykong/redis-cachetools"
-issues = "https://github.com/xykong/redis-cachetools/issues"
-package = "https://pypi.org/project/redis-cachetools"
+repository = "https://github.com/xykong/rediscache-cachetools"
+documentation = "https://github.com/xykong/rediscache-cachetools"
+issues = "https://github.com/xykong/rediscache-cachetools/issues"
+package = "https://pypi.org/project/rediscache-cachetools"
 
 
 [tool.poetry.dependencies]
