@@ -91,6 +91,20 @@ pluggy = ">=1.5,<2"
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "python-redis-cache"
+version = "4.0.1"
+description = "Basic Redis caching for functions"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "python_redis_cache-4.0.1-py3-none-any.whl", hash = "sha256:3669483a04eac5391caccf129456eb7ebf612a3a516ebcf3b4abb3807c234ccf"},
+    {file = "python_redis_cache-4.0.1.tar.gz", hash = "sha256:0568b5eaa2cf4c05c8fc9629d492203a274872380fc2fb06bd4207faa5e389d0"},
+]
+
+[package.dependencies]
+redis = "*"
+
+[[package]]
 name = "redis"
 version = "5.2.0"
 description = "Python client for Redis database and key-value store"
@@ -111,4 +125,4 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==23.2.1)", "requests (>=2.31.0)"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4bee5aa7fbcad725b3cb4b32b9a742100f224d7c01b7e8948ee3cb9010f1d26a"
+content-hash = "81a1c3ac37192236840315e3ef7d731f6754f67ad9a593597cbf63c6e5774e3d"

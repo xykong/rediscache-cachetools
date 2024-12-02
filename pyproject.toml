@@ -17,6 +17,7 @@ package = "https://pypi.org/project/rediscache-cachetools"
 python = "^3.11"
 cachetools = "^5.5.0"
 redis = "^5.2.0"
+python-redis-cache = "^4.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
