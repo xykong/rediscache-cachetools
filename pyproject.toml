@@ -1,9 +1,12 @@
-[tool.poetry]
+[project]
 name = "rediscache-cachetools"
-version = "0.1.0"
+version = "0.1.1"
 description = "An extension of python cachetools for redis cache."
-authors = ["xy.kong <xy.kong@gmail.com>"]
+authors = [
+    { name = "xy.kong", email = "xy.kong@gmail.com" },
+]
 readme = "README.md"
+package-mode = false
 
 
 [project.urls]
