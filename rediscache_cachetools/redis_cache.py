@@ -1,5 +1,6 @@
 import base64
 import json
+from inspect import stack, getmodule
 from typing import Any, MutableMapping
 
 import redis
@@ -15,33 +16,50 @@ class RedisCache(MutableMapping):
     :param prefix: Optional prefix to add to all keys.
     """
 
-    def __init__(self, host='localhost', port=6379, db=0, ttl=None, prefix=""):
+    def __init__(self, host='localhost', port=6379, db=0, ttl=600, prefix=""):
         self._redis = redis.StrictRedis(host=host, port=port, db=db, decode_responses=True)
         self._ttl = ttl
-        self.prefix = prefix if prefix.endswith(":") else prefix + ":"
+        self._prefix = prefix
+        self._function_path = self._get_calling_function_path()  # Initialize once
 
     @staticmethod
     def _serialize(value: Any) -> str:
-        """Serialize a value to a JSON string."""
+        """Serialize a value based on its type."""
         if isinstance(value, bytes):
-            # Encode bytes to a base64 string
-            value = base64.b64encode(value).decode('utf-8')
-            return json.dumps({"__type__": "bytes", "data": value})
-        return json.dumps(value)
+            # Store bytes as base64 encoded string
+            return f"b64:{base64.b64encode(value).decode('utf-8')}"
+        elif isinstance(value, (str, int, float)):
+            # Store simple types as-is
+            return str(value)
+        else:
+            # For other types, use JSON serialization
+            return f"json:{json.dumps(value)}"
 
     @staticmethod
     def _deserialize(value: str) -> Any:
-        """Deserialize a JSON string to a Python object."""
-        obj = json.loads(value)
-        if isinstance(obj, dict) and obj.get("__type__") == "bytes":
-            # Decode base64 string back to bytes
-            return base64.b64decode(obj["data"])
-        return obj
+        """Deserialize a value based on its prefix."""
+        if value.startswith("b64:"):
+            # Decode base64 encoded bytes
+            return base64.b64decode(value[4:])
+        elif value.startswith("json:"):
+            # Deserialize JSON data
+            return json.loads(value[5:])
+        else:
+            # Assume raw value, returning as string
+            return value
+
+    @staticmethod
+    def _get_calling_function_path() -> str:
+        """Get the calling function's module and name."""
+        stack_frame = stack()[2]
+        module = getmodule(stack_frame[0])
+        function_name = stack_frame.function
+        return f"{module.__name__}.{function_name}" if module else function_name
 
     def make_key(self, func, *args, **kwargs) -> str:
         """Generate a unique key with prefix and function path."""
-
-        return f"{self.prefix}{func.__module__}.{func.__qualname__}:{args}:{kwargs}"
+        # full_key = f"{self._prefix}{self._function_path}:{key}"
+        return f"{self._prefix}{func.__module__}.{func.__qualname__}:{args}:{kwargs}"
 
     @staticmethod
     def _make_key(key):
@@ -52,23 +70,22 @@ class RedisCache(MutableMapping):
 
     def __getitem__(self, key: Any) -> Any:
         """Retrieve a value from the cache."""
-        value = self._redis.get(self._make_key(key))
+        full_key = self._make_key(key)
+        value = self._redis.get(full_key)
         if value is None:
             raise KeyError(key)
-        # noinspection PyTypeChecker
         return self._deserialize(value)
 
     def __setitem__(self, key: Any, value: Any) -> None:
         """Set a value in the cache with an optional TTL."""
-        if self._ttl is None:
-            self._redis.set(self._make_key(key), self._serialize(value))
-        else:
-            self._redis.setex(self._make_key(key), self._ttl, self._serialize(value))
+        full_key = self._make_key(key)
+        self._redis.setex(full_key, self._ttl, self._serialize(value))
 
     def __delitem__(self, key: Any) -> None:
         """Delete a value from the cache."""
-        if not self._redis.delete(self._make_key(key)):
-            raise KeyError(self._make_key(key))
+        full_key = self._make_key(key)
+        if not self._redis.delete(full_key):
+            raise KeyError(key)
 
     def __len__(self) -> int:
         """Return an approximate count of items in the cache."""
@@ -81,9 +98,7 @@ class RedisCache(MutableMapping):
 
     def clear(self) -> None:
         """Clear all items in the cache."""
-        # self._redis.flushdb()
-        for key in self._redis.scan_iter():
-            self._redis.delete(key)
+        self._redis.flushdb()
 
     def stats(self) -> dict[str, Any]:
         """Return statistics about the Redis cache."""
