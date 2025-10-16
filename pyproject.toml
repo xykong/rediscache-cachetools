@@ -1,13 +1,18 @@
 [project]
 name = "rediscache-cachetools"
-version = "0.1.1"
 description = "An extension of python cachetools for redis cache."
+dynamic = ["version"]
 authors = [
-    { name = "xy.kong", email = "xy.kong@gmail.com" },
+    { name = "xy.kong", email = "xy.kong@gmail.com" }
 ]
+requires-python = "~=3.11"
 readme = "README.md"
+dependencies = [
+    "cachetools>=5.0.0",
+    "redis>=5.0.0",
+    "python-redis-cache>=4.0.0",
+]
 package-mode = false
-
 
 [project.urls]
 repository = "https://github.com/xykong/rediscache-cachetools"
@@ -15,22 +20,15 @@ documentation = "https://github.com/xykong/rediscache-cachetools"
 issues = "https://github.com/xykong/rediscache-cachetools/issues"
 package = "https://pypi.org/project/rediscache-cachetools"
 
-
-[tool.poetry.dependencies]
-python = "^3.11"
-cachetools = "^5.5.0"
-redis = "^5.2.0"
-python-redis-cache = "^4.0.1"
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-
+[dependency-groups]
+dev = ["pytest>=8.0.0", "hatchling>=1.0.0"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
+[tool.hatch.version]
+path = "rediscache_cachetools/__init__.py"
 
 [tool.versions]
 branch = "master"
@@ -39,7 +37,6 @@ commit_count = 4
 is_dirty = true
 datetime = "2024-12-01 01:26:17"
 version = "0.1.0"
-
 
 [tool.versions.settings]
 allow_dirty = false
